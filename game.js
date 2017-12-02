@@ -216,8 +216,6 @@ function updateEnemies() {
     // Look at each enemy
     for (var i = 0; i < enemies.length; i++) {
         
-        console.log(enemies[i]);
-        
         // If the enemy has collided with the player, kill
         if (collision(enemies[i].shape, player.shape)) {
             
@@ -247,6 +245,14 @@ function updateEnemies() {
         
         // Update the bullet position
         move(enemyBullets[i].shape, enemyBullets[i].speed);
+        
+        // If the bullet has collided with the player, kill them
+        if (collision(enemyBullets[i].shape, player.shape)) {
+            
+            // DIE
+            setup();
+            
+        }
         
     }
     
