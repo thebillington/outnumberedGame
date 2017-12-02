@@ -188,7 +188,7 @@ function updatePlayerBullets() {
                     if (collision(playerBullets[i].shape, enemies[j].shape)) {
                         
                         // Add one to score
-                        score ++;
+                        score++;
                         
                         // Delete them both
                         removeShape(playerBullets[i].shape);
@@ -216,6 +216,8 @@ function updateEnemies() {
     // Look at each enemy
     for (var i = 0; i < enemies.length; i++) {
         
+        console.log(enemies[i]);
+        
         // If the enemy has collided with the player, kill
         if (collision(enemies[i].shape, player.shape)) {
             
@@ -225,7 +227,7 @@ function updateEnemies() {
         }
         
         // Check if we need to shoot
-        if(cTime - enemies[i].lastShot > 5000) {
+        else if(cTime - enemies[i].lastShot > enemies[i].period) {
             
             // Face at the player
             atPlayer(enemies[i]);
@@ -345,9 +347,6 @@ function atMouse() {
 // Function to aim an enemy at the player
 function atPlayer(enemy) {
     
-    fill(0);
-    line(width / 2 + enemy.shape.x, height / 2 - enemy.shape.y,width / 2 + player.shape.x, height / 2 - player.shape.y);
-    
     // Calculate the angle
     var angle = Math.atan2(enemy.shape.x - player.shape.x, enemy.shape.y - player.shape.y);
     
@@ -373,7 +372,7 @@ function spawnEnemies(no) {
         // Add the new enemy
         var eShape = Circle(c.x, c.y, eRadius, 0, color(180, 25, 60));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, 10, cTime));
+        addEnemy(Enemy(eShape, 5, 10, cTime, 2000));
         
     }
     
