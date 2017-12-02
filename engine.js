@@ -124,6 +124,19 @@ function getRectPoints(rect) {
     return [pOne, pTwo, pThree, pFour];
 }
 
+// Function to get the points of the rectangle rotated
+function getRectPointsRotated(r) {
+	
+	// Get the coordinates
+	pOne = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	pTwo = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	pThree = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	pFour = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+    
+    // Return the points
+    return [pOne, pTwo, pThree, pFour];
+}
+
 // Pythagoras of two points
 function pointPythagoras(pointOne, pointTwo) {
 	
@@ -132,4 +145,63 @@ function pointPythagoras(pointOne, pointTwo) {
 	var yDiff = Math.abs(pointOne.y - pointTwo.y);
 	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 	
+}
+
+// Function to generate a random coordinate
+function getRandCoord() {
+    
+    // Return a random coordinate in the grid
+    return {x: Math.floor(Math.random() * (width) + 1 - width / 2), y: Math.floor(Math.random() * (height) + 1 - height / 2)}
+    
+}
+
+// Function to check that a cicle is on screen
+function onScreenCircle(x, y, r) {
+    
+    // Check each bound
+    if (x - r < -width / 2 || x + r > width / 2) {
+        return false;
+    }
+    if (y - r < -height / 2 || y + r > height / 2) {
+        return false;
+    }
+    return true;
+    
+}
+
+// Function to check that the player is on screen
+function returnToScreenRect(rect, width, height) {
+    
+    // Get the points of the rectangle rotated
+    var points = getRectPointsRotated(rect);
+    
+    // Check each point is on screen
+    for (var i = 0; i < points.length; i++) {
+        console.log(points[i]);
+        
+        // If the point is off screen
+        while (points[i].x <= 0) {
+            // Move the rectangle
+            rect.x += 1;
+            points = getRectPointsRotated(rect);
+        }
+        while (points[i].x >= width) {
+            // Move the rectangle
+            rect.x -= 1;
+            points = getRectPointsRotated(rect);
+        }
+        while (points[i].y <= 0) {
+            console.log("HERE1");
+            // Move the rectangle
+            rect.y -= 1;
+            points = getRectPointsRotated(rect);
+        }
+        while (points[i].y >= height) {
+            console.log("HERE2");
+            // Move the rectangle
+            rect.y += 1;
+            points = getRectPointsRotated(rect);
+        }
+        
+    }
 }

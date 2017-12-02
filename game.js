@@ -21,11 +21,12 @@ var S = 83;
 var D = 68;
 
 // Player physics
-pSpeed = 10;
-rSpeed = 5;
+var pSpeed = 10;
+var rSpeed = 5;
+var pBRadius = 5;
 
 // Enemy physics
-eRadius = 40;
+var eRadius = 40;
 
 // Store the number of enemies killed (score)
 var score = 0;
@@ -37,7 +38,7 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
     
     // Create the player
-    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,150,150)), 10, 20);
+    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,150,150)), 10, pBRadius);
     
     // Store the shapes that are for rendering
     addShape(player.shape);
@@ -84,6 +85,9 @@ function draw() {
         //Move down
         player.shape.x += pSpeed;
     }
+    
+    // Check the player is on screen
+    returnToScreenRect(player.shape, width, height);
     
     // Aim at the mouse
     atMouse();
@@ -194,8 +198,11 @@ function shoot(ent, enemy) {
     // If it was the player who shot
     if (!enemy) {
         
+        // Get the x and y position
+        var c = rotatePoint(ent.shape.x, ent.shape.y + ent.shape.height / 2, ent.shape.x, ent.shape.y, -ent.shape.rotation);
+        
         // Create the bullet shape
-        bShape = Circle(ent.shape.x, ent.shape.y, ent.bRadius, ent.shape.rotation, ent.shape.colour);
+        bShape = Circle(c.x, c.y, ent.bRadius, ent.shape.rotation, ent.shape.colour);
         
         // Add the shape to list of shapes
         addShapeStart(bShape);
@@ -273,27 +280,5 @@ function spawnEnemies(no) {
         addEnemy(Enemy(eShape, 5, 10));
         
     }
-    
-}
-
-// Function to generate a random coordinate
-function getRandCoord() {
-    
-    // Return a random coordinate in the grid
-    return {x: Math.floor(Math.random() * (width) + 1 - width / 2), y: Math.floor(Math.random() * (height) + 1 - height / 2)}
-    
-}
-
-// Function to check that a cicle is on screen
-function onScreenCircle(x, y, r) {
-    
-    // Check each bound
-    if (x - r < -width / 2 || x + r > width / 2) {
-        return false;
-    }
-    if (y - r < -height / 2 || y + r > height / 2) {
-        return false;
-    }
-    return true;
     
 }
