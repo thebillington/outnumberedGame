@@ -42,3 +42,13 @@ function rotatePoint(pointX, pointY, originX, originY, angle) {
 		y: s * (pointX - originX) + c * (pointY - originY) + originY
 	};
 }
+
+// Pythagoras of two points
+function pointPythagoras(pointOne, pointTwo) {
+	
+	// Get the difference in x and difference in y and return total distance
+	var xDiff = Math.abs(pointOne.x - pointTwo.x);
+	var yDiff = Math.abs(pointOne.y - pointTwo.y);
+	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+	
+}
