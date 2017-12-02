@@ -177,7 +177,6 @@ function returnToScreenRect(rect, width, height) {
     
     // Check each point is on screen
     for (var i = 0; i < points.length; i++) {
-        console.log(points[i]);
         
         // If the point is off screen
         while (points[i].x <= 0) {
@@ -191,13 +190,11 @@ function returnToScreenRect(rect, width, height) {
             points = getRectPointsRotated(rect);
         }
         while (points[i].y <= 0) {
-            console.log("HERE1");
             // Move the rectangle
             rect.y -= 1;
             points = getRectPointsRotated(rect);
         }
         while (points[i].y >= height) {
-            console.log("HERE2");
             // Move the rectangle
             rect.y += 1;
             points = getRectPointsRotated(rect);

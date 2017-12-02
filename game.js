@@ -2,13 +2,13 @@
 var player;
 
 // Store the enemies
-var enemies = [];
+var enemies;
 
 // Create a variable to hold all rendering shapes
-var shapes = [];
+var shapes;
 
 // Create an array to hold player bullets
-var playerBullets = [];
+var playerBullets;
 
 // Variable to hold background colour
 var bgColour;
@@ -29,13 +29,19 @@ var pBRadius = 5;
 var eRadius = 40;
 
 // Store the number of enemies killed (score)
-var score = 0;
+var score;
 
 // Function ran at the start of the game
 function setup() {
 	
 	// Create a canvas
 	createCanvas(windowWidth, windowHeight);
+    
+    // Initialize arrays
+    enemies = [];
+    shapes = [];
+    playerBullets = [];
+    score = 0;
     
     // Create the player
     player = Player(Rectangle(0, 0, 60, 100, 0, color(0,150,150)), 10, pBRadius);
@@ -49,6 +55,9 @@ function setup() {
     // Set the background colour
     bgColour = color(255, 255, 255);
     
+    // Set text size
+    textSize(32);
+    
 }
 
 // Render function
@@ -59,6 +68,10 @@ function draw() {
     
     // Render all the shapes
     renderShapes();
+    
+    // Show the score
+    fill(0);
+    text("Score: " + score.toString(), 20, 50);
     
     // Check for key presses
     if (keyIsDown(A)) {
@@ -93,7 +106,10 @@ function draw() {
     atMouse();
     
     // Update the bullets
-    updateBullets();
+    updatePlayerBullets();
+    
+    // Update enemies
+    updateEnemies();
     
 }
 
@@ -136,7 +152,7 @@ function removeEnemy(e) {
 }
 
 // Function to draw the bullets
-function updateBullets() {
+function updatePlayerBullets() {
     
     // Move each bullet
     for (var i = playerBullets.length - 1; i > -1; i--) {
@@ -180,6 +196,24 @@ function updateBullets() {
                 
             }
         }
+    }
+    
+}
+
+// Function to update the enemies
+function updateEnemies() {
+    
+    // Look at each enemy
+    for (var i = 0; i < enemies.length; i++) {
+        
+        // If the enemy has collided with the player, kill
+        if (collision(enemies[i].shape, player.shape)) {
+            
+            // DIE
+            setup();
+            
+        }
+        
     }
     
 }
