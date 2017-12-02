@@ -38,6 +38,9 @@ var cTime;
 // Background image
 var iImage;
 
+// High score
+var highScore = 0;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -92,6 +95,7 @@ function draw() {
     // Show the score
     fill(0);
     text("Score: " + score.toString(), 20, 50);
+    text("High score: " + highScore.toString(), 20, 100);
     
     // Check for key presses
     if (keyIsDown(A)) {
@@ -198,6 +202,12 @@ function updatePlayerBullets() {
                         
                         // Add one to score
                         score++;
+    
+                        // Check for high score
+                        if (score > highScore) {
+                            highScore = score;
+                        }
+                        
                         
                         // Delete them both
                         removeShape(playerBullets[i].shape);
