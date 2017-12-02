@@ -67,6 +67,38 @@ function collision(shapeOne, shapeTwo) {
 	
 	// Circle on rect
 	else if(shapeOne.type == "circle" && shapeTwo.type == "rect") {
+		
+		// Unrotate the circle
+		var circleLocation = rotatePoint(shapeOne.x, shapeOne.y, shapeTwo.x, shapeTwo.y, -shapeTwo.rotation);
+		
+		// Check wether the centre of the circle is inside the rect
+		xColl = circleLocation.x > shapeTwo.x - shapeTwo.width / 2 && circleLocation.x < shapeTwo.x + shapeTwo.width / 2;
+		yColl = circleLocation.y > shapeTwo.y - shapeTwo.height / 2 && circleLocation.y < shapeTwo.y + shapeTwo.height / 2;
+		
+		// If xColl and yColl
+		if (xColl && yColl) {
+			return true;
+		}
+		// If there is just a collision on the x, check the y distance
+		if (xColl) {
+			if (Math.abs(circleLocation.y - shapeTwo.y) < shapeOne.radius + shapeTwo.height / 2) {
+				return true;
+			}
+		}
+		// If there is just a collision on the y, check the x distance
+		if (yColl) {
+			if (Math.abs(circleLocation.x - shapeTwo.x) < shapeOne.radius + shapeTwo.width / 2) {
+				return true;
+			}
+		}
+		// Otherwise check the corners
+		var points = getRectPoints(shapeTwo);
+        for(var i = 0; i < points.length; i++) {
+            // Check whether the distance between the point and the circle is less than the radius
+            if (pointPythagoras(points[i], circleLocation) < shapeOne.radius) {
+                return true;
+            }
+        }
         
         // Return no collision
 		return false;
@@ -74,7 +106,7 @@ function collision(shapeOne, shapeTwo) {
 	
 	// Return the reversed collision
 	else {
-		return checkCollision(shapeTwo, shapeOne);
+		return collision(shapeTwo, shapeOne);
 	}
 	
 }

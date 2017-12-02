@@ -1,5 +1,6 @@
 // Store the player
 var player;
+var enemy;
 
 // Create a variable to hold some shapes
 var shapes = [];
@@ -16,10 +17,12 @@ function setup() {
     // Create the player
     player = Rectangle(0, 0, 100, 100, 0, color(255,0,0));
     
+    // Create the enemy
+    enemy = Circle(80, 80, 50, 0, color(0, 150, 150));
+    
     // Store the shapes that are for rendering
     shapes.push(player);
-    shapes.push(Circle(100, 100, 50, 0, color(0,150,150)));
-    shapes.push(Circle(-120, 120, 50, 0, color(100,0,255)));
+    shapes.push(enemy);
     
     // Set the background colour
     bgColour = color(255, 255, 255);
@@ -38,11 +41,8 @@ function draw() {
     // Rotate the player
     player.rotation += 1;
     
-    // Move the second circle
-    shapes[2].x += 1;
-    
-    // Check for collision of circles
-    console.log(collision(shapes[1], shapes[2]));
+    // Check for collision between player and enemy
+    console.log(collision(player, enemy));
     
 }
 
