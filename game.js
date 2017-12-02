@@ -35,6 +35,9 @@ var score;
 // Variable to score current time
 var cTime;
 
+// Background image
+var iImage;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -49,7 +52,7 @@ function setup() {
     score = 0;
     
     // Create the player
-    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,150,150)), 10, pBRadius);
+    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,204,204)), 10, pBRadius);
     
     // Store the shapes that are for rendering
     addShape(player.shape);
@@ -66,6 +69,9 @@ function setup() {
     // Set text size
     textSize(32);
     
+    // Get the background image
+    iImage = loadImage("instructions.png");
+    
 }
 
 // Render function
@@ -76,6 +82,9 @@ function draw() {
     
     // Clear the canvas
     background(bgColour);
+    
+    // Draw the instructions
+    image(iImage, 0, height - iImage.height);
     
     // Render all the shapes
     renderShapes();
@@ -216,26 +225,47 @@ function updateEnemies() {
     // Look at each enemy
     for (var i = 0; i < enemies.length; i++) {
         
-        // If the enemy has collided with the player, kill
-        if (collision(enemies[i].shape, player.shape)) {
+        // Check if the turret should become active
+        if (!enemies[i].active) {
             
-            // DIE
-            setup();
+            // If not full size, grow
+            if (enemies[i].shape.radius < eRadius) {
+                enemies[i].shape.radius += 1;
+            }
+            
+            // Check the time difference
+            if (cTime - enemies[i].created > 1000) {
+                
+                // Remove the existing shape
+                enemies[i].active = true;
+                enemies[i].shape.colour = color(255, 102, 102);
+                enemies[i].shape.radius = eRadius;
+            }
             
         }
+        else {
         
-        // Check if we need to shoot
-        else if(cTime - enemies[i].lastShot > enemies[i].period) {
-            
-            // Face at the player
-            atPlayer(enemies[i]);
-            
-            // Shoot
-            shoot(enemies[i], true);
-            
-            // Set the last shot time
-            enemies[i].lastShot = cTime;
-            
+            // If the enemy has collided with the player, kill
+            if (collision(enemies[i].shape, player.shape)) {
+
+                // DIE
+                setup();
+
+            }
+
+            // Check if we need to shoot
+            else if(cTime - enemies[i].lastShot > enemies[i].period) {
+
+                // Face at the player
+                atPlayer(enemies[i]);
+
+                // Shoot
+                shoot(enemies[i], true);
+
+                // Set the last shot time
+                enemies[i].lastShot = cTime;
+
+            }
         }
         
     }
@@ -376,7 +406,7 @@ function spawnEnemies(no) {
         }
         
         // Add the new enemy
-        var eShape = Circle(c.x, c.y, eRadius, 0, color(180, 25, 60));
+        var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
         addEnemy(Enemy(eShape, 5, 10, cTime, 2000));
         

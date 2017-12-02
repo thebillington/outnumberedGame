@@ -10,7 +10,7 @@ function Bullet(s, sp) {
 function Enemy(s, bs, br, crt, pr) {
     
     // Return the enemy object
-    return {shape: s, bSpeed: bs, bRadius: br, created: crt, lastShot: crt, period: pr}
+    return {shape: s, bSpeed: bs, bRadius: br, created: crt, lastShot: crt, period: pr, active: false}
     
 }
 
