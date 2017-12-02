@@ -79,6 +79,19 @@ function collision(shapeOne, shapeTwo) {
 	
 }
 
+// Function to get all the points of a rect
+function getRectPoints(rect) {
+	
+	// Get the coordinates
+	pOne = {x: rect.x - rect.width / 2, y: rect.y + rect.height / 2};
+	pTwo = {x: rect.x - rect.width / 2, y: rect.y - rect.height / 2};
+	pThree = {x: rect.x + rect.width / 2, y: rect.y + rect.height / 2};
+	pFour = {x: rect.x + rect.width / 2, y: rect.y - rect.height / 2};
+    
+    // Return the points
+    return [pOne, pTwo, pThree, pFour];
+}
+
 // Pythagoras of two points
 function pointPythagoras(pointOne, pointTwo) {
 	
