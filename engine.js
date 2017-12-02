@@ -2,10 +2,10 @@
 function drawRect(r) {
 	
 	// Get the coordinates
-	cOne = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), r.x + width / 2, r.y + height / 2, r.rotation);
-	cTwo = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), r.x + width / 2, r.y + height / 2, r.rotation);
-	cThree = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), r.x + width / 2, r.y + height / 2, r.rotation);
-	cFour = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), r.x + width / 2, r.y + height / 2, r.rotation);
+	cOne = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	cTwo = rotatePoint(r.x - r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	cThree = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y - r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
+	cFour = rotatePoint(r.x + r.width / 2 + width / 2, height / 2 - (r.y + r.height / 2), width / 2 + r.x, height / 2 - r.y, r.rotation);
 	
 	// Set fill colour
 	fill(r.colour);

@@ -15,7 +15,7 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
     
     // Create the player
-    player = Rectangle(0, 0, 100, 100, 0, color(255,0,0));
+    player = Rectangle(-100, 100, 60, 100, 0, color(255,0,0));
     
     // Create the enemy
     enemy = Circle(80, 80, 50, 0, color(0, 150, 150));
@@ -38,11 +38,38 @@ function draw() {
     // Render all the shapes
     renderShapes();
     
-    // Rotate the player
-    player.rotation += 1;
+    // Check for key presses
+    if (keyIsDown(LEFT_ARROW)) {
+        // Rotate left
+        player.rotation--;
+    }
+    if (keyIsDown(RIGHT_ARROW)) {
+        // Rotate right
+        player.rotation++;
+    }
+    if (keyIsDown(UP_ARROW)) {
+        // Move forward
+        movePlayer(10);
+    }
+    if (keyIsDown(DOWN_ARROW)) {
+        //Move backwards
+        movePlayer(-5);
+    }
     
     // Check for collision between player and enemy
     console.log(collision(player, enemy));
+    
+}
+
+// Add a function to move the player
+function movePlayer(speed) {
+	
+	// Convert the angle to radians
+	angle = player.rotation * Math.PI / 180.0;
+    
+    // Move the player by speed on each axis
+    player.x += Math.sin(angle) * speed;
+    player.y += Math.cos(angle) * speed;
     
 }
 
