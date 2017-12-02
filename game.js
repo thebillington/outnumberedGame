@@ -1,8 +1,10 @@
 // Store the player
 var player;
-var enemy;
 
-// Create a variable to hold some shapes
+// Store the enemies
+var enemies = [];
+
+// Create a variable to hold all rendering shapes
 var shapes = [];
 
 // Create an array to hold player bullets
@@ -22,6 +24,12 @@ var D = 68;
 pSpeed = 10;
 rSpeed = 5;
 
+// Enemy physics
+eRadius = 40;
+
+// Store the number of enemies killed (score)
+var score = 0;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -29,14 +37,13 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
     
     // Create the player
-    player = Player(Rectangle(-100, 100, 60, 100, 0, color(255,0,0)), 10, 20);
-    
-    // Create the enemy
-    enemy = Enemy(Circle(80, 80, 50, 0, color(0, 150, 150)), 5, 10);
+    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,150,150)), 10, 20);
     
     // Store the shapes that are for rendering
     addShape(player.shape);
-    addShape(enemy.shape);
+    
+    // Add an enemy
+    spawnEnemies(1);
     
     // Set the background colour
     bgColour = color(255, 255, 255);
@@ -81,13 +88,6 @@ function draw() {
     // Aim at the mouse
     atMouse();
     
-    // Check for collision between player and enemy
-    if (collision(player.shape, enemy.shape)) {
-        // Kill the player
-        player.x = -100;
-        player.y = -100;
-    }
-    
     // Update the bullets
     updateBullets();
     
@@ -109,22 +109,33 @@ function removeShape(s) {
     shapes.splice(i, 1);
 }
 
-// Function to add a shape
+// Function to add a bullet
 function addBullet(b, bl) {
     bl.push(b);
 }
 
-// Function to remove a shape
+// Function to remove a bullet
 function removeBullet(b, bl) {
     var i = bl.indexOf(b);
     bl.splice(i, 1);
+}
+
+// Function to add an enemy
+function addEnemy(e) {
+    enemies.push(e);
+}
+
+// Function to remove an enemy
+function removeEnemy(e) {
+    var i = enemies.indexOf(e);
+    enemies.splice(i, 1);
 }
 
 // Function to draw the bullets
 function updateBullets() {
     
     // Move each bullet
-    for (var i =0; i < playerBullets.length; i++) {
+    for (var i = playerBullets.length - 1; i > -1; i--) {
         
         // Move the bullet
         move(playerBullets[i].shape, playerBullets[i].speed);
@@ -134,20 +145,46 @@ function updateBullets() {
             removeShape(playerBullets[i].shape);
             removeBullet(playerBullets[i], playerBullets);
         }
+        else {
+        
+            // Check whether the bullet has collided with an enemy
+            for (var j = enemies.length - 1; j > -1; j--) {
+                
+                // Check there is a bullet
+                if(playerBullets.length > 0 && enemies.length > 0) {
+                    
+                    // Check for the collision
+                    if (collision(playerBullets[i].shape, enemies[j].shape)) {
+                        
+                        // Add one to score
+                        score ++;
+                        
+                        // Delete them both
+                        removeShape(playerBullets[i].shape);
+                        removeBullet(playerBullets[i], playerBullets);
+                        removeShape(enemies[j].shape);
+                        removeEnemy(enemies[j]);
+
+                        // Check number of enemies to spawn
+                        var eNo = 1;
+                        if (score % 5 == 0) {
+                            eNo += 1;
+                        }
+                        spawnEnemies(eNo);
+                    }
+                }
+                
+            }
+        }
     }
     
 }
 
 // Key press function
-function keyPressed() {
-    
-    // If it is the space bar
-    if(keyCode == SPACE_BAR) {
+function mousePressed() {
         
-        // Shoot
-        shoot(player, false);
-        
-    }
+    // Shoot
+    shoot(player, false);
     
 }
 
@@ -220,6 +257,22 @@ function atMouse() {
 function spawnEnemies(no) {
     
     // Spawn some enemies at a random position (and ensure they are a safe distance from the player)
+    for (var i = 0; i < no; i++) {
+        
+        // Get a random coordinate
+        var c = getRandCoord();
+        
+        // Check the distance
+        while (pointPythagoras({x: player.shape.x, y: player.shape.y}, c) < 200 || !onScreenCircle(c.x, c.y, eRadius)) {
+            c = getRandCoord();
+        }
+        
+        // Add the new enemy
+        var eShape = Circle(c.x, c.y, eRadius, 0, color(180, 25, 60));
+        addShapeStart(eShape);
+        addEnemy(Enemy(eShape, 5, 10));
+        
+    }
     
 }
 
@@ -227,6 +280,20 @@ function spawnEnemies(no) {
 function getRandCoord() {
     
     // Return a random coordinate in the grid
+    return {x: Math.floor(Math.random() * (width) + 1 - width / 2), y: Math.floor(Math.random() * (height) + 1 - height / 2)}
     
+}
+
+// Function to check that a cicle is on screen
+function onScreenCircle(x, y, r) {
+    
+    // Check each bound
+    if (x - r < -width / 2 || x + r > width / 2) {
+        return false;
+    }
+    if (y - r < -height / 2 || y + r > height / 2) {
+        return false;
+    }
+    return true;
     
 }
