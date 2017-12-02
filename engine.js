@@ -43,6 +43,42 @@ function rotatePoint(pointX, pointY, originX, originY, angle) {
 	};
 }
 
+// Check for collision
+function collision(shapeOne, shapeTwo) {
+	
+	// Rect on rect
+	if (shapeOne.type == "rect" && shapeTwo.type == "rect") {
+        
+        // Return no collision
+		return false;
+	}
+	
+	// Circle on circle
+	else if(shapeOne.type == "circle" && shapeTwo.type == "circle") {
+		
+		// Check whether the distance between the shapes is less than sum of radii
+		if(pointPythagoras({x: shapeOne.x, y: shapeOne.y}, {x: shapeTwo.x, y: shapeTwo.y}) < shapeOne.radius + shapeTwo.radius) {
+			return true;
+		}
+        
+        // Return no collision
+		return false;
+	}
+	
+	// Circle on rect
+	else if(shapeOne.type == "circle" && shapeTwo.type == "rect") {
+        
+        // Return no collision
+		return false;
+	}
+	
+	// Return the reversed collision
+	else {
+		return checkCollision(shapeTwo, shapeOne);
+	}
+	
+}
+
 // Pythagoras of two points
 function pointPythagoras(pointOne, pointTwo) {
 	
