@@ -7,8 +7,9 @@ var enemies;
 // Create a variable to hold all rendering shapes
 var shapes;
 
-// Create an array to hold player bullets
+// Create arrays to hold bullets
 var playerBullets;
+var enemyBullets;
 
 // Variable to hold background colour
 var bgColour;
@@ -31,6 +32,9 @@ var eRadius = 40;
 // Store the number of enemies killed (score)
 var score;
 
+// Variable to score current time
+var cTime;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -41,6 +45,7 @@ function setup() {
     enemies = [];
     shapes = [];
     playerBullets = [];
+    enemyBullets = [];
     score = 0;
     
     // Create the player
@@ -48,6 +53,9 @@ function setup() {
     
     // Store the shapes that are for rendering
     addShape(player.shape);
+    
+    // Get the current time
+    cTime = new Date().getTime();
     
     // Add an enemy
     spawnEnemies(1);
@@ -62,6 +70,9 @@ function setup() {
 
 // Render function
 function draw() {
+    
+    // Get the current time
+    cTime = new Date().getTime();
     
     // Clear the canvas
     background(bgColour);
@@ -193,7 +204,6 @@ function updatePlayerBullets() {
                         spawnEnemies(eNo);
                     }
                 }
-                
             }
         }
     }
@@ -213,6 +223,28 @@ function updateEnemies() {
             setup();
             
         }
+        
+        // Check if we need to shoot
+        if(cTime - enemies[i].lastShot > 5000) {
+            
+            // Face at the player
+            atPlayer(enemies[i]);
+            
+            // Shoot
+            shoot(enemies[i], true);
+            
+            // Set the last shot time
+            enemies[i].lastShot = cTime;
+            
+        }
+        
+    }
+    
+    // Look at each enemy bullet
+    for (var i = 0; i < enemyBullets.length; i++) {
+        
+        // Update the bullet position
+        move(enemyBullets[i].shape, enemyBullets[i].speed);
         
     }
     
@@ -243,6 +275,22 @@ function shoot(ent, enemy) {
         
         // Create a new bullet with the specified speed and direction
         addBullet(Bullet(bShape, ent.bSpeed), playerBullets);
+        
+    }
+    // Otherwise it was an enemy
+    else {
+        
+        // Get the x and y position
+        var c = rotatePoint(ent.shape.x, ent.shape.y + ent.shape.radius, ent.shape.x, ent.shape.y, -ent.shape.rotation);
+        
+        // Create the bullet shape
+        bShape = Circle(c.x, c.y, ent.bRadius, ent.shape.rotation, ent.shape.colour);
+        
+        // Add the shape to list of shapes
+        addShapeStart(bShape);
+        
+        // Create a new bullet with the specified speed and direction
+        addBullet(Bullet(bShape, ent.bSpeed), enemyBullets);
         
     }
     
@@ -294,6 +342,20 @@ function atMouse() {
     
 }
 
+// Function to aim an enemy at the player
+function atPlayer(enemy) {
+    
+    fill(0);
+    line(width / 2 + enemy.shape.x, height / 2 - enemy.shape.y,width / 2 + player.shape.x, height / 2 - player.shape.y);
+    
+    // Calculate the angle
+    var angle = Math.atan2(enemy.shape.x - player.shape.x, enemy.shape.y - player.shape.y);
+    
+    // Set the rotation of the player
+    enemy.shape.rotation = angle / Math.PI * 180 + 180;
+    
+}
+
 // Create a function to spawn some enemies
 function spawnEnemies(no) {
     
@@ -311,7 +373,7 @@ function spawnEnemies(no) {
         // Add the new enemy
         var eShape = Circle(c.x, c.y, eRadius, 0, color(180, 25, 60));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, 10));
+        addEnemy(Enemy(eShape, 5, 10, cTime));
         
     }
     
