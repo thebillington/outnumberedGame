@@ -13,6 +13,14 @@ var bgColour;
 
 // Space bar
 var SPACE_BAR = 32;
+var W = 87;
+var A = 65;
+var S = 83;
+var D = 68;
+
+// Player physics
+pSpeed = 10;
+rSpeed = 5;
 
 // Function ran at the start of the game
 function setup() {
@@ -45,22 +53,33 @@ function draw() {
     renderShapes();
     
     // Check for key presses
-    if (keyIsDown(LEFT_ARROW)) {
+    if (keyIsDown(A)) {
         // Rotate left
-        player.shape.rotation--;
+        player.shape.rotation -= rSpeed;
     }
-    if (keyIsDown(RIGHT_ARROW)) {
+    if (keyIsDown(D)) {
         // Rotate right
-        player.shape.rotation++;
+        player.shape.rotation += rSpeed;
     }
-    if (keyIsDown(UP_ARROW)) {
-        // Move forward
-        move(player.shape, 10);
+    if (keyIsDown(W)) {
+        // Move up
+        player.shape.y += pSpeed;
     }
-    if (keyIsDown(DOWN_ARROW)) {
-        //Move backwards
-        move(player.shape, -5);
+    if (keyIsDown(S)) {
+        //Move down
+        player.shape.y -= pSpeed;
     }
+    if (keyIsDown(A)) {
+        // Move up
+        player.shape.x -= pSpeed;
+    }
+    if (keyIsDown(D)) {
+        //Move down
+        player.shape.x += pSpeed;
+    }
+    
+    // Aim at the mouse
+    atMouse();
     
     // Check for collision between player and enemy
     if (collision(player.shape, enemy.shape)) {
@@ -77,6 +96,11 @@ function draw() {
 // Function to add a shape
 function addShape(s) {
     shapes.push(s);
+}
+
+// Function to add a shape at start of the list (drawn below all other shapes)
+function addShapeStart(s) {
+    shapes.unshift(s);
 }
 
 // Function to remove a shape
@@ -137,7 +161,7 @@ function shoot(ent, enemy) {
         bShape = Circle(ent.shape.x, ent.shape.y, ent.bRadius, ent.shape.rotation, ent.shape.colour);
         
         // Add the shape to list of shapes
-        addShape(bShape);
+        addShapeStart(bShape);
         
         // Create a new bullet with the specified speed and direction
         addBullet(Bullet(bShape, ent.bSpeed), playerBullets);
@@ -178,5 +202,31 @@ function renderShapes() {
 			
 		}
     }
+    
+}
+
+// Function to aim the player at the mouse
+function atMouse() {
+    
+    // Calculate the angle
+    var angle = Math.atan2((height / 2 - player.shape.y - mouseY), (width / 2 + player.shape.x - mouseX));
+    
+    // Set the rotation of the player
+    player.shape.rotation = angle / Math.PI * 180 + 270;
+    
+}
+
+// Create a function to spawn some enemies
+function spawnEnemies(no) {
+    
+    // Spawn some enemies at a random position (and ensure they are a safe distance from the player)
+    
+}
+
+// Function to generate a random coordinate
+function getRandCoord() {
+    
+    // Return a random coordinate in the grid
+    
     
 }
