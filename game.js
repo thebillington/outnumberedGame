@@ -5,8 +5,14 @@ var enemy;
 // Create a variable to hold some shapes
 var shapes = [];
 
+// Create an array to hold player bullets
+var playerBullets = [];
+
 // Variable to hold background colour
 var bgColour;
+
+// Space bar
+var SPACE_BAR = 32;
 
 // Function ran at the start of the game
 function setup() {
@@ -15,14 +21,14 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
     
     // Create the player
-    player = Rectangle(-100, 100, 60, 100, 0, color(255,0,0));
+    player = Player(Rectangle(-100, 100, 60, 100, 0, color(255,0,0)), 10, 20);
     
     // Create the enemy
-    enemy = Circle(80, 80, 50, 0, color(0, 150, 150));
+    enemy = Enemy(Circle(80, 80, 50, 0, color(0, 150, 150)), 5, 10);
     
     // Store the shapes that are for rendering
-    shapes.push(player);
-    shapes.push(enemy);
+    addShape(player.shape);
+    addShape(enemy.shape);
     
     // Set the background colour
     bgColour = color(255, 255, 255);
@@ -41,35 +47,114 @@ function draw() {
     // Check for key presses
     if (keyIsDown(LEFT_ARROW)) {
         // Rotate left
-        player.rotation--;
+        player.shape.rotation--;
     }
     if (keyIsDown(RIGHT_ARROW)) {
         // Rotate right
-        player.rotation++;
+        player.shape.rotation++;
     }
     if (keyIsDown(UP_ARROW)) {
         // Move forward
-        movePlayer(10);
+        move(player.shape, 10);
     }
     if (keyIsDown(DOWN_ARROW)) {
         //Move backwards
-        movePlayer(-5);
+        move(player.shape, -5);
     }
     
     // Check for collision between player and enemy
-    console.log(collision(player, enemy));
+    if (collision(player.shape, enemy.shape)) {
+        // Kill the player
+        player.x = -100;
+        player.y = -100;
+    }
+    
+    // Update the bullets
+    updateBullets();
+    
+}
+
+// Function to add a shape
+function addShape(s) {
+    shapes.push(s);
+}
+
+// Function to remove a shape
+function removeShape(s) {
+    var i = shapes.indexOf(s);
+    shapes.splice(i, 1);
+}
+
+// Function to add a shape
+function addBullet(b, bl) {
+    bl.push(b);
+}
+
+// Function to remove a shape
+function removeBullet(b, bl) {
+    var i = bl.indexOf(b);
+    bl.splice(i, 1);
+}
+
+// Function to draw the bullets
+function updateBullets() {
+    
+    // Move each bullet
+    for (var i =0; i < playerBullets.length; i++) {
+        
+        // Move the bullet
+        move(playerBullets[i].shape, playerBullets[i].speed);
+        
+        // Check whether the bullet needs deleting
+        if ((playerBullets[i].shape.x < -width / 2 || playerBullets[i].shape.x > width / 2) || (playerBullets[i].shape.y < -height / 2 || playerBullets[i].shape.y > height / 2)) {
+            removeShape(playerBullets[i].shape);
+            removeBullet(playerBullets[i], playerBullets);
+        }
+    }
+    
+}
+
+// Key press function
+function keyPressed() {
+    
+    // If it is the space bar
+    if(keyCode == SPACE_BAR) {
+        
+        // Shoot
+        shoot(player, false);
+        
+    }
+    
+}
+
+// Function to shoot
+function shoot(ent, enemy) {
+    
+    // If it was the player who shot
+    if (!enemy) {
+        
+        // Create the bullet shape
+        bShape = Circle(ent.shape.x, ent.shape.y, ent.bRadius, ent.shape.rotation, ent.shape.colour);
+        
+        // Add the shape to list of shapes
+        addShape(bShape);
+        
+        // Create a new bullet with the specified speed and direction
+        addBullet(Bullet(bShape, ent.bSpeed), playerBullets);
+        
+    }
     
 }
 
 // Add a function to move the player
-function movePlayer(speed) {
+function move(shape, speed) {
 	
 	// Convert the angle to radians
-	angle = player.rotation * Math.PI / 180.0;
+	angle = shape.rotation * Math.PI / 180.0;
     
     // Move the player by speed on each axis
-    player.x += Math.sin(angle) * speed;
-    player.y += Math.cos(angle) * speed;
+    shape.x += Math.sin(angle) * speed;
+    shape.y += Math.cos(angle) * speed;
     
 }
 

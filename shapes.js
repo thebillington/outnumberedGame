@@ -10,6 +10,6 @@ function Rectangle(_x, _y, w, h, rot, c) {
 function Circle(_x, _y, r, rot, c) {
     
     // Return the object
-    return {x: _x, y: _y, radius: r, rotation: r, colour: c, type: "circle"}
+    return {x: _x, y: _y, radius: r, rotation: rot, colour: c, type: "circle"}
     
 }
