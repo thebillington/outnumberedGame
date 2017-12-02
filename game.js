@@ -151,7 +151,7 @@ function updateBullets() {
             for (var j = enemies.length - 1; j > -1; j--) {
                 
                 // Check there is a bullet
-                if(playerBullets.length > 0 && enemies.length > 0) {
+                if(playerBullets[i] !== undefined && enemies[j] !== undefined) {
                     
                     // Check for the collision
                     if (collision(playerBullets[i].shape, enemies[j].shape)) {
