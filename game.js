@@ -32,6 +32,9 @@ var eRadius = 40;
 // Store the number of enemies killed (score)
 var score;
 
+// Last score
+var lastScore = 0;
+
 // Variable to score current time
 var cTime;
 
@@ -95,7 +98,8 @@ function draw() {
     // Show the score
     fill(0);
     text("Score: " + score.toString(), 20, 50);
-    text("High score: " + highScore.toString(), 20, 100);
+    text("Last score: " + lastScore.toString(), 20, 100);
+    text("High score: " + highScore.toString(), 20, 150);
     
     // Check for key presses
     if (keyIsDown(A)) {
@@ -259,6 +263,7 @@ function updateEnemies() {
             if (collision(enemies[i].shape, player.shape)) {
 
                 // DIE
+                lastScore = score;
                 setup();
 
             }
@@ -290,6 +295,7 @@ function updateEnemies() {
         if (collision(enemyBullets[i].shape, player.shape)) {
             
             // DIE
+            lastScore = score;
             setup();
             
         }
