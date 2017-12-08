@@ -24,10 +24,7 @@ var D = 68;
 // Player physics
 var pSpeed = 10;
 var rSpeed = 5;
-var pBRadius = 5;
-
-// Enemy physics
-var eRadius = 40;
+var pBRadius;
 
 // Store the number of enemies killed (score)
 var score;
@@ -44,6 +41,11 @@ var iImage;
 // High score
 var highScore = 0;
 
+// Size variables
+var playerWidth;
+var playerHeight;
+var eRadius;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -57,8 +59,14 @@ function setup() {
     enemyBullets = [];
     score = 0;
     
+    // Set up the sizes of entities
+    playerWidth = width / 40;
+    playerHeight = width / 24;
+    eRadius = width / 56;
+    pBRadius = playerWidth / 12;
+    
     // Create the player
-    player = Player(Rectangle(0, 0, 60, 100, 0, color(0,204,204)), 10, pBRadius);
+    player = Player(Rectangle(0, 0, playerWidth, playerHeight, 0, color(0,204,204)), 10, pBRadius);
     
     // Store the shapes that are for rendering
     addShape(player.shape);
@@ -77,6 +85,13 @@ function setup() {
     
     // Get the background image
     iImage = loadImage("instructions.png");
+    
+}
+
+// Function to setup the graphics and player size
+function setupEntities() {
+    
+    
     
 }
 
@@ -424,7 +439,7 @@ function spawnEnemies(no) {
         // Add the new enemy
         var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, 10, cTime, 2000));
+        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime, 2000));
         
     }
     
