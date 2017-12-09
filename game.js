@@ -61,6 +61,9 @@ var levelNo;
 // Set the number of enemies needed to kill
 var noEnemies;
 
+// Store the current number of enemies
+var totEnemies;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -93,8 +96,11 @@ function setup() {
     // Get the current time
     cTime = new Date().getTime();
     
+    // Set the total enemies
+    totEnemies = 1;
+    
     // Add an enemy
-    spawnEnemies(1);
+    spawnEnemies(totEnemies);
     
     // Set the background colour
     bgColour = color(255, 255, 255);
@@ -103,7 +109,7 @@ function setup() {
     textSize(32);
     
     // Set the initial number of enemies needed to kill
-    noEnemies = 10;
+    noEnemies = 50;
     
     // Set the number of enemies remaining
     enemiesRemaining = noEnemies;
@@ -177,13 +183,13 @@ function levelUp() {
     levelNo++;
     
     // Delete current enemies
-    for (var i = 0; i < enemies.length; i++) {
+    for (var i = enemies.length - 1; i >= 0; i--) {
         // Remove the shape and enemy
         removeShape(enemies[i].shape);
         removeEnemy(enemies[i]);
     }
     // Delete current bullets
-    for (var i = 0; i < enemyBullets.length; i++) {
+    for (var i = enemyBullets.length - 1; i >= 0; i--) {
         removeShape(enemyBullets[i].shape);
         removeBullet(enemyBullets[i], enemyBullets);
     }
@@ -192,6 +198,7 @@ function levelUp() {
     if (levelNo == levels.length) {
         levelNo = 0;
         noEnemies += 10;
+        totEnemies = 1;
     }
     
     // Go up a level
@@ -275,27 +282,33 @@ function updatePlayerBullets() {
                             // Go up a level
                             levelUp();
                             
+                            // Spawn some enemies
+                            spawnEnemies(totEnemies);
+                            
                         }
+                        else {
     
-                        // Check for high score
-                        if (score > highScore) {
-                            highScore = score;
-                        }
-                        
-                        
-                        // Delete them both
-                        removeShape(playerBullets[i].shape);
-                        removeBullet(playerBullets[i], playerBullets);
-                        console.log(enemies[i]);
-                        removeShape(enemies[j].shape);
-                        removeEnemy(enemies[j]);
+                            // Check for high score
+                            if (score > highScore) {
+                                highScore = score;
+                            }
 
-                        // Check number of enemies to spawn
-                        var eNo = 1;
-                        if (score % 5 == 0) {
-                            eNo += 1;
+
+                            // Delete them both
+                            removeShape(playerBullets[i].shape);
+                            removeBullet(playerBullets[i], playerBullets);
+                            console.log(enemies[j]);
+                            removeShape(enemies[j].shape);
+                            removeEnemy(enemies[j]);
+
+                            // Check number of enemies to spawn
+                            var eNo = 1;
+                            if (score % 5 == 0) {
+                                eNo ++;
+                                totEnemies++;
+                            }
+                            spawnEnemies(eNo);
                         }
-                        spawnEnemies(eNo);
                     }
                 }
             }
@@ -533,13 +546,13 @@ function spawnEnemies(no) {
             fireRate = 2000;
         }
         if (level == "homing") {
-            fireRate = 4000;
+            fireRate = 6000;
         }
         
         // Add the new enemy
         var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime, fireRate));
+        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime + i * 200, fireRate));
         
     }
     
