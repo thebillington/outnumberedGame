@@ -10,7 +10,25 @@
     <script src="engine.js"></script>
     <script src="entities.js"></script>
     <script src="game.js"></script>
+    <script src="doc.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body style="overflow:hidden;">
+      
+      <div id="background">
+          <div id="instructions">
+              <h1>Outnumbered</h1>
+              <br>
+              <img src="instructions.png">
+              <br>
+              <p>Developed using <a href="https://p5js.org/" target="_blank">p5.js</a></p>
+              <p>Check out the <a href="/beta">beta</a> version</p>
+              <p><a href="https://github.com/thebillington/outnumberedGame" target="_blank">Source code</a></p>
+          </div>
+          <div id="close">
+            <p class="bold" onclick="hideMenu()">X</p>
+          </div>
+      </div>
+      
   </body>
 </html>

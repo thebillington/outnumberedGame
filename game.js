@@ -46,6 +46,9 @@ var playerWidth;
 var playerHeight;
 var eRadius;
 
+// Create a list of levels
+var levels = ["basic", "homing"];
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -83,16 +86,6 @@ function setup() {
     // Set text size
     textSize(32);
     
-    // Get the background image
-    iImage = loadImage("instructions.png");
-    
-}
-
-// Function to setup the graphics and player size
-function setupEntities() {
-    
-    
-    
 }
 
 // Render function
@@ -103,9 +96,6 @@ function draw() {
     
     // Clear the canvas
     background(bgColour);
-    
-    // Draw the instructions
-    image(iImage, 0, height - iImage.height);
     
     // Render all the shapes
     renderShapes();
