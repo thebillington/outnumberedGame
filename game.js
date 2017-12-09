@@ -32,14 +32,17 @@ var score;
 // Last score
 var lastScore = 0;
 
+// High score
+var highScore = 0;
+
+// Store the number of enemies remaining
+var enemiesRemaining;
+
 // Variable to score current time
 var cTime;
 
 // Background image
 var iImage;
-
-// High score
-var highScore = 0;
 
 // Size variables
 var playerWidth;
@@ -48,6 +51,9 @@ var eRadius;
 
 // Create a list of levels
 var levels = ["basic", "homing"];
+
+// Store the current level
+var level;
 
 // Function ran at the start of the game
 function setup() {
@@ -86,6 +92,12 @@ function setup() {
     // Set text size
     textSize(32);
     
+    // Set the number of enemies remaining
+    enemiesRemaining = 50;
+    
+    // Set the level to basic
+    level = "homing";
+    
 }
 
 // Render function
@@ -105,6 +117,7 @@ function draw() {
     text("Score: " + score.toString(), 20, 50);
     text("Last score: " + lastScore.toString(), 20, 100);
     text("High score: " + highScore.toString(), 20, 150);
+    text("Enemies remaining: " + enemiesRemaining.toString(), 20, 200);
     
     // Check for key presses
     if (keyIsDown(A)) {
@@ -211,6 +224,16 @@ function updatePlayerBullets() {
                         
                         // Add one to score
                         score++;
+                        
+                        // Remove one from enemies remaining
+                        enemiesRemaining--;
+                        
+                        // If there are no enemies remaining
+                        if (enemiesRemaining == 0) {
+                            
+                            null;
+                            
+                        }
     
                         // Check for high score
                         if (score > highScore) {
@@ -291,18 +314,41 @@ function updateEnemies() {
     }
     
     // Look at each enemy bullet
-    for (var i = 0; i < enemyBullets.length; i++) {
+    for (var i = enemyBullets.length - 1; i >= 0; i--) {
         
-        // Update the bullet position
-        move(enemyBullets[i].shape, enemyBullets[i].speed);
+        // Check the bullet exists
+        if (enemyBullets[i] !== undefined) {
         
-        // If the bullet has collided with the player, kill them
-        if (collision(enemyBullets[i].shape, player.shape)) {
-            
-            // DIE
-            lastScore = score;
-            setup();
-            
+            // Check whether the bullet needs deleting
+            if ((enemyBullets[i].shape.x < -width / 2 || enemyBullets[i].shape.x > width / 2) || (enemyBullets[i].shape.y < -height / 2 || enemyBullets[i].shape.y > height / 2)) {
+                removeShape(enemyBullets[i].shape);
+                removeBullet(enemyBullets[i], enemyBullets);
+            }
+            else {
+
+                // If the game mode is homing
+                if (level == "homing") {
+                    
+                    console.log("HERE");
+
+                    // Point the enemy bullet at the player
+                    atPlayer(enemyBullets[i]);
+
+                }
+
+                // Update the bullet position
+                move(enemyBullets[i].shape, enemyBullets[i].speed);
+
+                // If the bullet has collided with the player, kill them
+                if (collision(enemyBullets[i].shape, player.shape)) {
+
+                    // DIE
+                    lastScore = score;
+                    setup();
+
+                }
+
+            }
         }
         
     }
@@ -424,6 +470,15 @@ function spawnEnemies(no) {
         // Check the distance
         while (pointPythagoras({x: player.shape.x, y: player.shape.y}, c) < 200 || !onScreenCircle(c.x, c.y, eRadius)) {
             c = getRandCoord();
+        }
+        
+        // Depending on the game mode, set the fire rate
+        var fireRate;
+        if (level == "basic") {
+            fireRate = 2000;
+        }
+        else if (level == "homing") {
+            fireRate = 5000;
         }
         
         // Add the new enemy
