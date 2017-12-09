@@ -55,11 +55,21 @@ var levels = ["basic", "homing"];
 // Store the current level
 var level;
 
+// Store the level number
+var levelNo;
+
+// Set the number of enemies needed to kill
+var noEnemies;
+
 // Function ran at the start of the game
 function setup() {
 	
 	// Create a canvas
 	createCanvas(windowWidth, windowHeight);
+    
+    // Set the level
+    levelNo = 0;
+    level = levels[levelNo];
     
     // Initialize arrays
     enemies = [];
@@ -92,11 +102,11 @@ function setup() {
     // Set text size
     textSize(32);
     
-    // Set the number of enemies remaining
-    enemiesRemaining = 50;
+    // Set the initial number of enemies needed to kill
+    noEnemies = 10;
     
-    // Set the level to basic
-    level = "homing";
+    // Set the number of enemies remaining
+    enemiesRemaining = noEnemies;
     
 }
 
@@ -114,10 +124,11 @@ function draw() {
     
     // Show the score
     fill(0);
-    text("Score: " + score.toString(), 20, 50);
-    text("Last score: " + lastScore.toString(), 20, 100);
-    text("High score: " + highScore.toString(), 20, 150);
-    text("Enemies remaining: " + enemiesRemaining.toString(), 20, 200);
+    text("Level: " + (levelNo+1).toString(), 20, 50);
+    text("Score: " + score.toString(), 20, 100);
+    text("Last score: " + lastScore.toString(), 20, 150);
+    text("High score: " + highScore.toString(), 20, 200);
+    text("Enemies remaining: " + enemiesRemaining.toString(), 20, 250);
     
     // Check for key presses
     if (keyIsDown(A)) {
@@ -156,6 +167,36 @@ function draw() {
     
     // Update enemies
     updateEnemies();
+    
+}
+
+// Function to level up
+function levelUp() {
+    
+    // Go up a level
+    levelNo++;
+    
+    // Delete current enemies
+    for (var i = 0; i < enemies.length; i++) {
+        // Remove the shape and enemy
+        removeShape(enemies[i].shape);
+        removeEnemy(enemies[i]);
+    }
+    // Delete current bullets
+    for (var i = 0; i < enemyBullets.length; i++) {
+        removeShape(enemyBullets[i].shape);
+        removeBullet(enemyBullets[i], enemyBullets);
+    }
+    
+    // If user has finished all levels, ramp difficulty
+    if (levelNo == levels.length) {
+        levelNo = 0;
+        noEnemies += 10;
+    }
+    
+    // Go up a level
+    enemiesRemaining = noEnemies;
+    level = levels[levelNo];
     
 }
 
@@ -231,7 +272,8 @@ function updatePlayerBullets() {
                         // If there are no enemies remaining
                         if (enemiesRemaining == 0) {
                             
-                            null;
+                            // Go up a level
+                            levelUp();
                             
                         }
     
@@ -244,6 +286,7 @@ function updatePlayerBullets() {
                         // Delete them both
                         removeShape(playerBullets[i].shape);
                         removeBullet(playerBullets[i], playerBullets);
+                        console.log(enemies[i]);
                         removeShape(enemies[j].shape);
                         removeEnemy(enemies[j]);
 
@@ -328,24 +371,36 @@ function updateEnemies() {
 
                 // If the game mode is homing
                 if (level == "homing") {
-                    
-                    console.log("HERE");
 
                     // Point the enemy bullet at the player
                     atPlayer(enemyBullets[i]);
+                    
+                    // Check if this bullet has collided with an enemy bullet
+                    for (var j = 0; j < playerBullets.length; j++) {
+                        if (collision(enemyBullets[i].shape, playerBullets[j].shape)) {
+                            // Delete the enemy bullet and break loop
+                            removeShape(enemyBullets[i].shape);
+                            removeBullet(enemyBullets[i], enemyBullets);
+                            break;
+                        }
+                    }
 
                 }
+                
+                // Check the bullet hasn't been deleted
+                if (enemyBullets[i] !== undefined) {
 
-                // Update the bullet position
-                move(enemyBullets[i].shape, enemyBullets[i].speed);
+                    // Update the bullet position
+                    move(enemyBullets[i].shape, enemyBullets[i].speed);
 
-                // If the bullet has collided with the player, kill them
-                if (collision(enemyBullets[i].shape, player.shape)) {
+                    // If the bullet has collided with the player, kill them
+                    if (collision(enemyBullets[i].shape, player.shape)) {
 
-                    // DIE
-                    lastScore = score;
-                    setup();
+                        // DIE
+                        lastScore = score;
+                        setup();
 
+                    }
                 }
 
             }
@@ -477,14 +532,14 @@ function spawnEnemies(no) {
         if (level == "basic") {
             fireRate = 2000;
         }
-        else if (level == "homing") {
-            fireRate = 5000;
+        if (level == "homing") {
+            fireRate = 4000;
         }
         
         // Add the new enemy
         var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime, 2000));
+        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime, fireRate));
         
     }
     
