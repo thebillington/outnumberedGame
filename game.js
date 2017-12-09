@@ -73,6 +73,15 @@ var lastShot;
 // Store whether the user is currently firing
 var firing;
 
+// Store when the user last teleported
+var lastTele;
+
+// Store the teleport frequency
+var teleFreq = 10000;
+
+// Create an indicator to show whether teleport is available
+var teleIndicator;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -129,6 +138,15 @@ function setup() {
     // Set shooting to false
     shooting = false;
     
+    // Set last teleport time
+    lastTele = cTime;
+    
+    // Create the teleport indicator
+    teleIndicator = Rectangle(0, height / 2 - 50, playerHeight, playerWidth, 0, color(0,204,107));
+    
+    // Add the teleport indicator
+    addShape(teleIndicator);
+    
 }
 
 // Render function
@@ -152,14 +170,6 @@ function draw() {
     text("Enemies remaining: " + enemiesRemaining.toString(), 20, 250);
     
     // Check for key presses
-    if (keyIsDown(A)) {
-        // Rotate left
-        player.shape.rotation -= rSpeed;
-    }
-    if (keyIsDown(D)) {
-        // Rotate right
-        player.shape.rotation += rSpeed;
-    }
     if (keyIsDown(W)) {
         // Move up
         player.shape.y += pSpeed;
@@ -175,6 +185,23 @@ function draw() {
     if (keyIsDown(D)) {
         //Move down
         player.shape.x += pSpeed;
+    }
+    if (keyIsDown(SPACE_BAR)) {
+        // Teleport
+        if (cTime - lastTele > teleFreq) {
+            player.shape.x = mouseX - width / 2;
+            player.shape.y = height / 2 - mouseY;
+            lastTele = cTime;
+        }
+    }
+    
+    // Check if teleporter is available
+    // Teleport
+    if (cTime - lastTele > teleFreq) {
+        teleIndicator.colour = color(0,204,107);
+    }
+    else {
+        teleIndicator.colour = color(255,200,200);
     }
     
     // Check the player is on screen
@@ -453,23 +480,33 @@ function updateEnemies() {
 
 // On mouse press
 function mousePressed() {
+    
+    // If left click
+    if (mouseButton == LEFT) {
         
-    // Shoot
-    shoot(player, false);
-    
-    // Set last shot
-    lastShot = cTime;
-    
-    // Set shooting to true
-    shooting = true;
+        // Shoot
+        shoot(player, false);
+
+        // Set last shot
+        lastShot = cTime;
+
+        // Set shooting to true
+        shooting = true;
+        
+    }
     
 }
 
 // On mouse up
 function mouseReleased() {
     
-    // Set shooting to false
-    shooting = false;
+    // If it was left mouse button
+    if (mouseButton = LEFT) {
+    
+        // Set shooting to false
+        shooting = false;
+        
+    }
     
 }
 
