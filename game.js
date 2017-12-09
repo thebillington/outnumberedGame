@@ -64,6 +64,15 @@ var noEnemies;
 // Store the current number of enemies
 var totEnemies;
 
+// Store whether the user is currently shooting
+var shooting;
+
+// Store when the player last shot
+var lastShot;
+
+// Store whether the user is currently firing
+var firing;
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -96,6 +105,9 @@ function setup() {
     // Get the current time
     cTime = new Date().getTime();
     
+    // Set the time the player last shot
+    lastShot = cTime;
+    
     // Set the total enemies
     totEnemies = 1;
     
@@ -113,6 +125,9 @@ function setup() {
     
     // Set the number of enemies remaining
     enemiesRemaining = noEnemies;
+    
+    // Set shooting to false
+    shooting = false;
     
 }
 
@@ -168,6 +183,17 @@ function draw() {
     // Aim at the mouse
     atMouse();
     
+    // If the user is shooting but we aren't currently firing a shot
+    if (shooting && !firing) {
+        
+        // If the difference between the last shot and the current time is greater than 500ms
+        if (cTime - lastShot > 500) {
+            lastShot = cTime;
+            shoot(player, false);
+        }
+        
+    }
+    
     // Update the bullets
     updatePlayerBullets();
     
@@ -194,11 +220,13 @@ function levelUp() {
         removeBullet(enemyBullets[i], enemyBullets);
     }
     
+    // Reset total enemies
+    totEnemies = 1;
+    
     // If user has finished all levels, ramp difficulty
     if (levelNo == levels.length) {
         levelNo = 0;
         noEnemies += 10;
-        totEnemies = 1;
     }
     
     // Go up a level
@@ -423,11 +451,25 @@ function updateEnemies() {
     
 }
 
-// Key press function
+// On mouse press
 function mousePressed() {
         
     // Shoot
     shoot(player, false);
+    
+    // Set last shot
+    lastShot = cTime;
+    
+    // Set shooting to true
+    shooting = true;
+    
+}
+
+// On mouse up
+function mouseReleased() {
+    
+    // Set shooting to false
+    shooting = false;
     
 }
 
