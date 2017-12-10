@@ -88,11 +88,29 @@ var theme;
 // Store whether this is the first setup
 var firstSetup = true;
 
+// Store whether music is playing
+var musicPlaying;
+
 // Pre load
 function preload() {
     
     // Get theme music
     theme = loadSound("theme.mp3");
+    
+}
+
+// Function to mute music
+function mute() {
+    
+    // Check whether music is playing
+    if (musicPlaying) {
+        theme.stop();
+        musicPlaying = false;
+    }
+    else {
+        theme.loop();
+        musicPlaying = true;
+    }
     
 }
 
@@ -110,6 +128,7 @@ function setup() {
     if (firstSetup) {
         theme.loop();
         firstSetup = false;
+        musicPlaying = true;
     }  
     
     // Initialize arrays
