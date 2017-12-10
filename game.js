@@ -82,6 +82,20 @@ var teleFreq = 10000;
 // Create an indicator to show whether teleport is available
 var teleIndicator;
 
+// Store the theme
+var theme;
+
+// Store whether this is the first setup
+var firstSetup = true;
+
+// Pre load
+function preload() {
+    
+    // Get theme music
+    theme = loadSound("theme.mp3");
+    
+}
+
 // Function ran at the start of the game
 function setup() {
 	
@@ -91,6 +105,12 @@ function setup() {
     // Set the level
     levelNo = 0;
     level = levels[levelNo];
+    
+    //If this is the first load
+    if (firstSetup) {
+        theme.loop();
+        firstSetup = false;
+    }  
     
     // Initialize arrays
     enemies = [];
@@ -352,7 +372,6 @@ function updatePlayerBullets() {
                             // Delete them both
                             removeShape(playerBullets[i].shape);
                             removeBullet(playerBullets[i], playerBullets);
-                            console.log(enemies[j]);
                             removeShape(enemies[j].shape);
                             removeEnemy(enemies[j]);
 
