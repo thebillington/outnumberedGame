@@ -97,6 +97,9 @@ function preload() {
     // Get theme music
     theme = loadSound("theme.mp3");
     
+    // Set timeout on the menu window
+    setTimeout(hideMenu, 10000);
+    
 }
 
 // Function to mute music
