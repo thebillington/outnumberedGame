@@ -50,7 +50,7 @@ var playerHeight;
 var eRadius;
 
 // Create a list of levels
-var levels = ["basic", "homing", "quick"];
+var levels = ["basic", "homing", "small", "quick"];
 
 // Store the current level
 var level;
@@ -238,7 +238,7 @@ function draw() {
     }
     
     // Set the teleporter time
-    if (level == "quick") {
+    if (level == "small") {
         teleFreq = 4000;
     }
     else {
@@ -668,21 +668,25 @@ function spawnEnemies(no) {
             c = getRandCoord();
         }
         
-        // Depending on the game mode, set the fire rate
+        // Depending on the game mode, set the physics
         var fireRate = 2000;
         var r = eRadius / 3;
+        var bulletSpeed = height / 200;
         if (level == "homing") {
             fireRate = 6000;
         }
-        if (level == "quick") {
+        if (level == "small") {
             fireRate = 1000;
             r = r / 2;
+        }
+        if (level == "quick") {
+            bulletSpeed = bulletSpeed * 2;
         }
         
         // Add the new enemy
         var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, r, cTime + i * 200, fireRate));
+        addEnemy(Enemy(eShape, bulletSpeed, r, cTime + i * 200, fireRate));
         
     }
     
