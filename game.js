@@ -50,7 +50,7 @@ var playerHeight;
 var eRadius;
 
 // Create a list of levels
-var levels = ["basic", "homing"];
+var levels = ["basic", "homing", "quick"];
 
 // Store the current level
 var level;
@@ -97,9 +97,6 @@ function preload() {
     // Get theme music
     theme = loadSound("theme.mp3");
     
-    // Set timeout on the menu window
-    setTimeout(hideMenu, 10000);
-    
 }
 
 // Function to mute music
@@ -119,9 +116,12 @@ function mute() {
 
 // Function ran at the start of the game
 function setup() {
+    
+    // Set timeout on the menu window
+    setTimeout(hideMenu, 10000);
 	
-	// Create a canvas
-	createCanvas(windowWidth, windowHeight);
+    // Create a canvas
+    createCanvas(windowWidth, windowHeight);
     
     // Set the level
     levelNo = 0;
@@ -235,6 +235,14 @@ function draw() {
             player.shape.y = height / 2 - mouseY;
             lastTele = cTime;
         }
+    }
+    
+    // Set the teleporter time
+    if (level == "quick") {
+        teleFreq = 4000;
+    }
+    else {
+        teleFreq = 10000;
     }
     
     // Check if teleporter is available
@@ -661,18 +669,20 @@ function spawnEnemies(no) {
         }
         
         // Depending on the game mode, set the fire rate
-        var fireRate;
-        if (level == "basic") {
-            fireRate = 2000;
-        }
+        var fireRate = 2000;
+        var r = eRadius / 3;
         if (level == "homing") {
             fireRate = 6000;
+        }
+        if (level == "quick") {
+            fireRate = 1000;
+            r = r / 2;
         }
         
         // Add the new enemy
         var eShape = Circle(c.x, c.y, 1, 0, color(255, 255, 102));
         addShapeStart(eShape);
-        addEnemy(Enemy(eShape, 5, eRadius / 3, cTime + i * 200, fireRate));
+        addEnemy(Enemy(eShape, 5, r, cTime + i * 200, fireRate));
         
     }
     
