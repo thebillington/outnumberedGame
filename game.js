@@ -50,7 +50,7 @@ var playerHeight;
 var eRadius;
 
 // Create a list of levels
-var levels = ["basic", "homing", "small", "quick"];
+var levels = ["basic", "small", "quick", "homing"];
 
 // Store the current level
 var level;
@@ -91,11 +91,15 @@ var firstSetup = true;
 // Store whether music is playing
 var musicPlaying;
 
+// Store whether the current level is a boss or not
+var boss;
+
 // Pre load
 function preload() {
     
     // Get theme music
     theme = loadSound("theme.mp3");
+    theme.setVolume(0.05);
     
 }
 
@@ -124,8 +128,11 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     
     // Set the level
-    levelNo = 0;
+    levelNo = 1;
     level = levels[levelNo];
+    
+    // Set boss to false
+    boss = false;
     
     //If this is the first load
     if (firstSetup) {
@@ -282,9 +289,34 @@ function draw() {
 // Function to level up
 function levelUp() {
     
-    // Go up a level
-    levelNo++;
+    // Check whether we are currently in a boss battle
+    if (!boss) {
     
+        // Go up a level
+        levelNo++;
+
+        // Reset total enemies
+        totEnemies++;
+
+        // If user has finished all levels, ramp difficulty
+        if (levelNo == levels.length) {
+            levelNo = 0;
+            noEnemies += 10;
+        }
+
+        // Go up a level
+        enemiesRemaining = noEnemies;
+        level = levels[levelNo];
+        
+        // Disable boss
+        boss = false;
+    }
+    else {
+        // Set the next level as a boss fight
+        boss = true;
+        enemiesRemaining = 1;
+    }
+
     // Delete current enemies
     for (var i = enemies.length - 1; i >= 0; i--) {
         // Remove the shape and enemy
@@ -296,19 +328,6 @@ function levelUp() {
         removeShape(enemyBullets[i].shape);
         removeBullet(enemyBullets[i], enemyBullets);
     }
-    
-    // Reset total enemies
-    totEnemies = 1;
-    
-    // If user has finished all levels, ramp difficulty
-    if (levelNo == levels.length) {
-        levelNo = 0;
-        noEnemies += 10;
-    }
-    
-    // Go up a level
-    enemiesRemaining = noEnemies;
-    level = levels[levelNo];
     
 }
 
@@ -388,7 +407,14 @@ function updatePlayerBullets() {
                             levelUp();
                             
                             // Spawn some enemies
-                            spawnEnemies(totEnemies);
+                            if (!boss) {
+                                spawnEnemies(totEnemies);
+                            }
+                            
+                            // Otherwise spawn a boss
+                            else {
+                                spawnBoss();
+                            }
                             
                         }
                         else {
@@ -409,7 +435,6 @@ function updatePlayerBullets() {
                             var eNo = 1;
                             if (score % 5 == 0) {
                                 eNo ++;
-                                totEnemies++;
                             }
                             spawnEnemies(eNo);
                         }
@@ -424,52 +449,73 @@ function updatePlayerBullets() {
 // Function to update the enemies
 function updateEnemies() {
     
-    // Look at each enemy
-    for (var i = 0; i < enemies.length; i++) {
+    // If we aren't in a boss fight
+    if (!boss) {
+    
+        // Look at each enemy
+        for (var i = 0; i < enemies.length; i++) {
+
+            // Check if the turret should become active
+            if (!enemies[i].active) {
+
+                // If not full size, grow
+                if (enemies[i].shape.radius < eRadius) {
+                    enemies[i].shape.radius += 1;
+                }
+
+                // Check the time difference
+                if (cTime - enemies[i].created > 1000) {
+
+                    // Remove the existing shape
+                    enemies[i].active = true;
+                    enemies[i].shape.colour = color(255, 102, 102);
+                    enemies[i].shape.radius = eRadius;
         
-        // Check if the turret should become active
-        if (!enemies[i].active) {
-            
-            // If not full size, grow
-            if (enemies[i].shape.radius < eRadius) {
-                enemies[i].shape.radius += 1;
+                    // If this is a homing enemy, fire
+                    if (level == "homing") {
+                        
+                        // Face at the player
+                        atPlayer(enemies[i]);
+
+                        // Shoot
+                        shoot(enemies[i], true);
+
+                    }
+                }
+
             }
-            
-            // Check the time difference
-            if (cTime - enemies[i].created > 1000) {
-                
-                // Remove the existing shape
-                enemies[i].active = true;
-                enemies[i].shape.colour = color(255, 102, 102);
-                enemies[i].shape.radius = eRadius;
+            else {
+
+                // If the enemy has collided with the player, kill
+                if (collision(enemies[i].shape, player.shape)) {
+
+                    // DIE
+                    lastScore = score;
+                    setup();
+
+                }
+
+                // Check if we need to shoot
+                else if(cTime - enemies[i].lastShot > enemies[i].period) {
+
+                    // Face at the player
+                    atPlayer(enemies[i]);
+
+                    // Shoot
+                    shoot(enemies[i], true);
+
+                    // Set the last shot time
+                    enemies[i].lastShot = cTime;
+
+                }
             }
-            
+
         }
-        else {
+    }
+    // Boss
+    else {
         
-            // If the enemy has collided with the player, kill
-            if (collision(enemies[i].shape, player.shape)) {
-
-                // DIE
-                lastScore = score;
-                setup();
-
-            }
-
-            // Check if we need to shoot
-            else if(cTime - enemies[i].lastShot > enemies[i].period) {
-
-                // Face at the player
-                atPlayer(enemies[i]);
-
-                // Shoot
-                shoot(enemies[i], true);
-
-                // Set the last shot time
-                enemies[i].lastShot = cTime;
-
-            }
-        }
+        
         
     }
     
@@ -593,6 +639,8 @@ function shoot(ent, enemy) {
         // Create a new bullet with the specified speed and direction
         addBullet(Bullet(bShape, ent.bSpeed), enemyBullets);
         
+        console.log(enemyBullets);
+        
     }
     
 }
@@ -689,5 +737,13 @@ function spawnEnemies(no) {
         addEnemy(Enemy(eShape, bulletSpeed, r, cTime + i * 200, fireRate));
         
     }
+    
+}
+
+// Create a function to spawn a boss
+function spawnBoss() {
+    
+    // Create the boss shape
+    
     
 }

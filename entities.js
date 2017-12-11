@@ -20,4 +20,23 @@ function Player(s, bs, br) {
     
     // Return the player object
     return {shape: s, bSpeed: bs, bRadius: br}
+    
+}
+
+// Function to return a boss
+function Boss(s, e, d) {
+    
+    // Return the boss object
+    return {shape: s, enemies: s, direction: d}
+    
+}
+
+// Function to generate turrets for a boss
+function genTurrets(boss, no) {
+    
+    // Create an empty list to hold the turrets
+    var turrets = [];
+    
+    // 
+    
 }
