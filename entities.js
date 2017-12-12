@@ -1,13 +1,13 @@
 // Function to return a bullet
-function Bullet(s, sp) {
+function Bullet(s, sp, h) {
     
     // Return a bullet object
-    return {shape: s, speed: sp}
+    return {shape: s, speed: sp, homing: h}
     
 }
 
 // Function to return an enemy
-function Enemy(s, bs, br, crt, pr) {
+function Enemy(s, bs, br, crt, pr, h) {
     
     // Return the enemy object
     return {shape: s, bSpeed: bs, bRadius: br, created: crt, lastShot: crt, period: pr, active: false}

@@ -128,7 +128,7 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     
     // Set the level
-    levelNo = 1;
+    levelNo = 3;
     level = levels[levelNo];
     
     // Set boss to false
@@ -241,6 +241,12 @@ function draw() {
             player.shape.x = mouseX - width / 2;
             player.shape.y = height / 2 - mouseY;
             lastTele = cTime;
+            // If homing, deactivate all missiles
+            if(level == "homing") {
+                for (var i = 0; i < enemyBullets.length; i++) {
+                    enemyBullets[i].homing = false;
+                }
+            }
         }
     }
     
@@ -531,9 +537,11 @@ function updateEnemies() {
                 removeBullet(enemyBullets[i], enemyBullets);
             }
             else {
+                
+                console.log(enemyBullets[i]);
 
                 // If the game mode is homing
-                if (level == "homing") {
+                if (enemyBullets[i].homing) {
 
                     // Point the enemy bullet at the player
                     atPlayer(enemyBullets[i]);
@@ -637,9 +645,7 @@ function shoot(ent, enemy) {
         addShapeStart(bShape);
         
         // Create a new bullet with the specified speed and direction
-        addBullet(Bullet(bShape, ent.bSpeed), enemyBullets);
-        
-        console.log(enemyBullets);
+        addBullet(Bullet(bShape, ent.bSpeed, level == "homing"), enemyBullets);
         
     }
     
