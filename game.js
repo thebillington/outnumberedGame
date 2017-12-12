@@ -81,6 +81,9 @@ var teleFreq = 10000;
 
 // Create an indicator to show whether teleport is available
 var teleIndicator;
+var teleR;
+var teleG;
+var teleB;
 
 // Store the theme
 var theme;
@@ -193,8 +196,10 @@ function setup() {
     // Create the teleport indicator
     teleIndicator = Rectangle(0, height / 2 - 50, playerHeight, playerWidth, 0, color(0,204,107));
     
-    // Add the teleport indicator
-    addShape(teleIndicator);
+    // Set inital colour of the tele indicator
+    teleR = 255;
+    teleG = 200;
+    teleB = 200;
     
 }
 
@@ -206,6 +211,9 @@ function draw() {
     
     // Clear the canvas
     background(bgColour);
+    
+    // Draw the teleport indicator
+    drawRect(teleIndicator);
     
     // Render all the shapes
     renderShapes();
@@ -245,6 +253,7 @@ function draw() {
             if(level == "homing") {
                 for (var i = 0; i < enemyBullets.length; i++) {
                     enemyBullets[i].homing = false;
+                    enemyBullets[i].shape.colour = color(102, 255, 55);
                 }
             }
         }
@@ -254,6 +263,9 @@ function draw() {
     if (level == "small") {
         teleFreq = 4000;
     }
+    else if (level == "homing") {
+        teleFreq = 6000;
+    }
     else {
         teleFreq = 10000;
     }
@@ -261,10 +273,23 @@ function draw() {
     // Check if teleporter is available
     // Teleport
     if (cTime - lastTele > teleFreq) {
+        teleR = 255;
+        teleG = 200;
+        teleB = 200;
         teleIndicator.colour = color(0,204,107);
     }
     else {
-        teleIndicator.colour = color(255,200,200);
+        if(teleR > 0) {
+            teleR -= 1;
+        }
+        if(teleG < 170) {
+            teleG += 0.01;
+        }
+        if(teleB > 150) {
+            teleB -= 0.5;
+        }
+        console.log(teleR + "," + teleG + "," + teleB);
+        teleIndicator.colour = color(teleR,teleG,teleB);
     }
     
     // Check the player is on screen
@@ -537,8 +562,6 @@ function updateEnemies() {
                 removeBullet(enemyBullets[i], enemyBullets);
             }
             else {
-                
-                console.log(enemyBullets[i]);
 
                 // If the game mode is homing
                 if (enemyBullets[i].homing) {
