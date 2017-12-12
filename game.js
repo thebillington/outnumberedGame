@@ -108,8 +108,6 @@ function preload() {
 // Volume control
 function mouseWheel(event) {
     
-    console.log("HERE");
-    
     // Check within range
     if (theme.getVolume() <= 1.0) {
     
@@ -125,6 +123,16 @@ function mouseWheel(event) {
             theme.setVolume(theme.getVolume() - 0.1);
         }
     }
+    
+}
+
+// Function to get url params (level)
+function getLevel() {
+    
+    // Store the URL
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    return parseInt(url.searchParams.get('l'));
     
 }
 
@@ -153,7 +161,10 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     
     // Set the level
-    levelNo = 3;
+    levelNo = getLevel() - 1;
+    if(isNaN(levelNo) || (levelNo < 0 || levelNo > levels.length - 1)) {
+        levelNo = 0;
+    }
     level = levels[levelNo];
     
     // Set boss to false
