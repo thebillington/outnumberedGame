@@ -102,7 +102,29 @@ function preload() {
     
     // Get theme music
     theme = loadSound("theme.mp3");
-    theme.setVolume(0.05);
+    theme.setVolume(0.2);
+}
+
+// Volume control
+function mouseWheel(event) {
+    
+    console.log("HERE");
+    
+    // Check within range
+    if (theme.getVolume() <= 1.0) {
+    
+        // Volume up
+        if (event.delta > 0) {
+            theme.setVolume(theme.getVolume() + 0.1);
+        }
+    }
+    if (theme.getVolume() >= 0) {
+        
+        // Volume down
+        if (event.delta < 0) {
+            theme.setVolume(theme.getVolume() - 0.1);
+        }
+    }
     
 }
 
@@ -288,7 +310,6 @@ function draw() {
         if(teleB > 150) {
             teleB -= 0.5;
         }
-        console.log(teleR + "," + teleG + "," + teleB);
         teleIndicator.colour = color(teleR,teleG,teleB);
     }
     
